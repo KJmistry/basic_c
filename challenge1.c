@@ -1,11 +1,13 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <ctype.h>
+#include <limits.h>
 #include "operations.h"
-int (*gOperation[])(int, int) = {add, subtract, multiply, divide, modulo};
+int (*gOperation[])(int, int, int *) = {add, subtract, multiply, divide, modulo};
 
 int main()
 {
-    int oprType,num1,num2,valid;
+    int oprType,num1,num2,valid,finalAns;
 
     // array of function pointers having all above pointers of all above functions
 
@@ -16,48 +18,64 @@ int main()
         printf("Invalid Input Value !!\n");
         return 0;
     }
-    valid = doOperation(&oprType, &num1, &num2);
+    valid = doOperation(&oprType, &num1, &num2, &finalAns);
     if(1 == valid)
     {
         printf("Error Occured\n");
         return 0;
     }
+    printf("Final Result of operation between %d & %d is : %d\n",num1, num2, finalAns);
 }
 
 
 // 5 Labor functions
 
-int add(int num1, int num2)
+int add(int num1, int num2, int *resultPtr )
 {
-    return num1 + num2;
+    *resultPtr = num1 + num2;
+    return 0;
 }
 
-int subtract(int num1, int num2)
+int subtract(int num1, int num2, int *resultPtr)
 {
-    return num1 - num2;
+    *resultPtr = num1 - num2;
+    return 0;
 }
 
-int multiply(int num1, int num2)
-{
-    return num1 * num2;
+int multiply(int num1, int num2, int *resultPtr)
+{   
+    *resultPtr = num1 * num2;
+    if(num1 * num2 > INT_MAX || num1 * num2 < INT_MIN)
+    // if((num1 > 0 && num2 > 0 && *resultPtr < 0) | (num1 < 0 && num2 < 0 && *resultPtr > 0) | (num1 > 0 && num2 < 0 && *resultPtr > 0) | (num1 < 0 && num2 > 0 && *resultPtr > 0))
+    {
+        printf("OverFlow Occured \n");
+        exit(0);
+    }
+    return 0;
 }
 
-int divide(int num1, int num2)
+int divide(int num1, int num2, int *resultPtr)
 {   
     if( num2 == 0)
     {
-        printf("0 Detected as denominator (Divide by 0 error !)\n");
-        // return 1;
+        printf("Zero Detected as denominator (Divide by 0 error !)\n");
+        exit(0);
     }
-    return num1 / num2;
+    *resultPtr = num1 / num2;
+    return 0;
 }
 
-int modulo(int num1, int num2)
+int modulo(int num1, int num2, int *resultPtr)
 {
-    return num1 % num2;
+    if( num2 == 0)
+    {
+        printf("Zero Detected as denominator (Divide by 0 error !)\n");
+        exit(0);
+    }
+    *resultPtr = num1 % num2;
 }
 
-int doOperation(int *operationType, int *num1, int *num2)
+int doOperation(int *operationType, int *num1, int *num2, int *result)
 {   
     if(NULL==num2)
     {
@@ -80,8 +98,7 @@ int doOperation(int *operationType, int *num1, int *num2)
         return 1;
     }
 
-    ioResult=(*gOperation[*operationType])(*num1, *num2);
-    printf("Final Result of operation between %d & %d is : %d\n",*num1, *num2, ioResult);
+    ioResult=(*gOperation[*operationType])(*num1, *num2, result);
     return 0;   
 }
 
@@ -112,8 +129,18 @@ int getInput(int* operationType, int* num1, int* num2)
         return 1;
     }
     printf("Please Enter First int Operand \n");
-    scanf("%d",num1);
+    
+    if(scanf("%d",num1) == 0)
+    {
+        printf("First operand is not an integer !\n");
+        return 1;
+    }
+    //fflush(stdin);
     printf("Please Enter Second int Operand \n");
-    scanf("%d",num2);
+    if(scanf("%d",num2) == 0)
+    {
+        printf("second operand is not an integer !\n");
+        return 1;
+    }
     return 0;
 }
