@@ -3,6 +3,7 @@
 #include <ctype.h>
 #include <limits.h>
 #include "operations.h"
+//Change tese
 int (*gOperation[])(int, int, int *) = {add, subtract, multiply, divide, modulo};
 
 int main()
