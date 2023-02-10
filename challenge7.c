@@ -65,13 +65,13 @@ int printList(struct node *ptr)
         return 1;
     }
 
-    printf("[ ");
+    
     while (ptr->next != NULL)
     {
-        printf("%d, ", ptr->data);
+        printf(" [%p] [Data = %d] [%p] --> ", ptr, ptr -> data, ptr -> next);
         ptr = ptr->next;
     }
-    printf("]\n");
+    printf("NULL\n");
     return 0;
 }
 
@@ -119,8 +119,8 @@ void freeList(struct node *ptr)
 int main()
 {
 
-    char list1[] = "9999998";
-    char list2[] = "999";
+    char list1[] = "111";
+    char list2[] = "222";
 
     struct node *head1 = (struct node *)malloc(sizeof(struct node));
     struct node *head2 = (struct node *)malloc(sizeof(struct node));
